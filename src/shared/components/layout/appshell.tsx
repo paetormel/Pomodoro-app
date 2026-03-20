@@ -2,12 +2,23 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
-import { RiTimerFill, RiFullscreenFill, RiFullscreenExitFill } from "react-icons/ri";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  AnimatePresence,
+} from "framer-motion";
+import {
+  RiTimerFill,
+  RiFullscreenFill,
+  RiFullscreenExitFill,
+} from "react-icons/ri";
 import Pomodoro from "../../../features/pomodoro/component/pomodoro";
 import TodoList from "@/src/features/todo-list/component/todolist";
 import Sidebar from "./sidebar";
 import MusicPlayer from "@/src/features/music/component/musicPlayer";
+import SessionHistory from "@/src/features/session/component/sessionHistory";
+import Quote from "@/src/features/quote/component/Quote";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
@@ -51,24 +62,31 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           className="flex flex-col items-center gap-6"
         >
           <motion.div
-            animate={{ 
+            animate={{
               scale: [1, 1.1, 1],
-              filter: ["blur(0px)", "blur(2px)", "blur(0px)"]
+              filter: ["blur(0px)", "blur(2px)", "blur(0px)"],
             }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           >
-            <RiTimerFill size={80} className="text-[#1DB954] drop-shadow-[0_0_15px_rgba(29,185,84,0.5)]" />
+            <RiTimerFill
+              size={80}
+              className="text-[#1DB954] drop-shadow-[0_0_15px_rgba(29,185,84,0.5)]"
+            />
           </motion.div>
 
           <div className="w-40 h-0.5 bg-white/5 rounded-full overflow-hidden relative">
-            <motion.div 
+            <motion.div
               initial={{ x: "-100%" }}
               animate={{ x: "100%" }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
               className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-[#1DB954] to-transparent"
             />
           </div>
-          
+
           <span className="text-[10px] font-bold text-white/20 uppercase tracking-[0.3em] animate-pulse">
             Authenticating
           </span>
@@ -108,38 +126,42 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         onClick={toggleFullscreen}
         className="fixed bottom-6 left-6 z-100 p-3 rounded-2xl border border-white/10 bg-[#121212]/50 backdrop-blur-xl text-white/40 hover:text-[#1DB954] hover:bg-white/5 transition-all shadow-2xl group"
       >
-        {isFullscreen ? <RiFullscreenExitFill size={22} /> : <RiFullscreenFill size={22} />}
+        {isFullscreen ? (
+          <RiFullscreenExitFill size={22} />
+        ) : (
+          <RiFullscreenFill size={22} />
+        )}
       </button>
 
-      <main className="relative flex-1 z-10 p-6">
-        {children}
-      </main>
-        
+      <main className="relative flex-1 z-10 p-6">{children}</main>
+
       {/* --- FLOATING COMPONENTS (WIDGETS) --- */}
       <div className="z-50 pointer-events-none">
         <AnimatePresence>
           {currentForm.has("dashboard") && (
-            <Pomodoro 
+            <Pomodoro
               key="pomodoro-widget"
-              currentForm={currentForm} 
-              setCurrentForm={setCurrentForm} 
-              constraintsRef={constraintsRef} 
-            />
-          )}
-          
-          {currentForm.has("task") && (
-            <TodoList 
-              key="todo-widget" 
-              constraintsRef={constraintsRef} 
-            />
-          )}
-
-          {currentForm.has("music") && (
-            <MusicPlayer 
-              key="music-widget" 
+              currentForm={currentForm}
+              setCurrentForm={setCurrentForm}
               constraintsRef={constraintsRef}
             />
           )}
+          {currentForm.has("session-history") && (
+            <SessionHistory
+              key="history-widget"
+              constraintsRef={constraintsRef}
+            />
+          )}
+
+          {currentForm.has("task") && (
+            <TodoList key="todo-widget" constraintsRef={constraintsRef} />
+          )}
+
+          {currentForm.has("music") && (
+            <MusicPlayer key="music-widget" constraintsRef={constraintsRef} />
+          )}
+
+          {currentForm.has("quote") && <Quote constraintsRef={constraintsRef}/>}
         </AnimatePresence>
       </div>
     </div>

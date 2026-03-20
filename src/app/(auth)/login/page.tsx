@@ -25,7 +25,7 @@ export default function LoginPage() {
             <RiTimerFill size={40} className="text-[#1DB954]" />
           </div>
           <h1 className="text-3xl font-black text-white tracking-tighter">
-            Focus<span className="text-[#1DB954]">Flow</span>
+            Yani<span className="text-[#1DB954]">doro</span>
           </h1>
           <p className="text-white/40 text-sm font-medium uppercase tracking-[0.2em]">
             Deep Work Dashboard

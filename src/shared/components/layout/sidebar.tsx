@@ -10,23 +10,15 @@ import { FaMusic } from "react-icons/fa6";
 import {
   LuTimer,
   LuListTodo,
-  LuChartNoAxesColumn,
-  LuHistory,
-  LuSmile,
-  LuPalette,
-  LuSettings,
 } from "react-icons/lu";
+import { PiQuotesFill } from "react-icons/pi";
 import { CgProfile } from "react-icons/cg";
 
 const sidebarData = [
   { id: "dashboard", label: "Timer", icon: LuTimer },
   { id: "task", label: "Task", icon: LuListTodo },
-  { id: "progress", label: "Progress", icon: LuChartNoAxesColumn },
-  { id: "session-history", label: "History", icon: LuHistory },
-  { id: "mood-tracker", label: "Mood", icon: LuSmile },
-  { id: "theme", label: "Theme", icon: LuPalette },
+  { id: "quote", label: "Quote", icon: PiQuotesFill },
   { id: "music", label: "Music", icon: FaMusic },
-  { id: "setting", label: "Setting", icon: LuSettings },
 ];
 
 interface SidebarProps {

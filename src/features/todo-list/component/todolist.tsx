@@ -5,7 +5,6 @@ import { HiPlus } from "react-icons/hi2";
 import { RiDeleteBin6Line, RiCheckboxCircleFill, RiCheckboxBlankCircleLine, RiListCheck2 } from "react-icons/ri";
 import { MdDragIndicator } from "react-icons/md";
 
-// 1. Types
 interface Todo {
   id: string;
   text: string;
@@ -19,7 +18,6 @@ const TodoList = ({ constraintsRef }: TodolistProps) => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [inputValue, setInputValue] = useState("");
 
-  // 2. Logic Handlers
   const addTodo = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
@@ -45,17 +43,17 @@ const TodoList = ({ constraintsRef }: TodolistProps) => {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-40">
-      {/* Draggable Wrapper - Spotify Dark Style */}
       <motion.div
         drag
         dragMomentum={false}
         dragConstraints={constraintsRef}
         dragElastic={0.1}
-        className="pointer-events-auto absolute p-5 rounded-4xl border border-white/20 bg-[#282828]/90  backdrop-blur-2xl shadow-2xl w-95"
-        style={{ top: "5%", right: "2%" }}
+        /* 1. Ginawang flex-col para ma-control ang vertical layout */
+        className="pointer-events-auto absolute p-5 rounded-4xl border border-white/20 bg-[#282828]/90 backdrop-blur-2xl shadow-2xl w-95 h-[90vh] flex flex-col"
+        style={{ top: "2%", right: "2%" }}
       >
-        {/* Header - Media Icon Style */}
-        <div className="flex justify-between items-center mb-5 px-2">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-5 px-2 shrink-0">
           <div className="flex items-center gap-2 text-[#1DB954]">
             <RiListCheck2 size={24} />
             <span className="text-[11px] font-bold text-white/90 uppercase tracking-[0.2em]">Daily Tasks</span>
@@ -63,8 +61,8 @@ const TodoList = ({ constraintsRef }: TodolistProps) => {
           <div className="w-8 h-1 bg-white/10 rounded-full cursor-grab active:cursor-grabbing"></div>
         </div>
 
-        {/* Input Form - Dark Sleek Style */}
-        <form onSubmit={addTodo} className="flex gap-2 mb-6">
+        {/* Input Form */}
+        <form onSubmit={addTodo} className="flex gap-2 mb-6 shrink-0">
           <input
             type="text"
             value={inputValue}
@@ -80,13 +78,14 @@ const TodoList = ({ constraintsRef }: TodolistProps) => {
           </button>
         </form>
 
-        {/* Reorderable List - Playlist Style */}
-        <div className="bg-[#181818] rounded-2xl p-2 border border-white/5 shadow-inner">
+        {/* 2. List Container - Sakop ang buong natitirang height (flex-1) */}
+        <div className="bg-[#181818] rounded-2xl p-2 border border-white/5 shadow-inner flex-1 flex flex-col min-h-0">
           <Reorder.Group 
             axis="y" 
             values={todos} 
             onReorder={setTodos} 
-            className="space-y-1 max-h-75 overflow-y-auto pr-1 scrollbar-hide"
+            /* 3. flex-1 at overflow-y-auto para dito lang ang scroll */
+            className="flex-1 space-y-1 overflow-y-auto pr-1 scrollbar-hide"
           >
             <AnimatePresence mode="popLayout">
               {todos.map((todo) => (
@@ -96,7 +95,7 @@ const TodoList = ({ constraintsRef }: TodolistProps) => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className={`flex items-center gap-3 p-3 rounded-xl cursor-grab active:cursor-grabbing transition-colors group ${
+                  className={`flex items-center gap-3 p-3 rounded-xl cursor-grab active:cursor-grabbing transition-colors group shrink-0 ${
                     todo.completed ? "bg-transparent" : "hover:bg-white/5"
                   }`}
                 >
@@ -130,14 +129,14 @@ const TodoList = ({ constraintsRef }: TodolistProps) => {
           </Reorder.Group>
           
           {todos.length === 0 && (
-            <div className="py-10 text-center">
+            <div className="flex-1 flex justify-center">
               <p className="text-[12px] text-white/10 italic">Your playlist is empty.</p>
             </div>
           )}
         </div>
 
         {/* Footer Statistics */}
-        <div className="mt-4 px-2 flex justify-between items-center">
+        <div className="mt-4 px-2 flex justify-between items-center shrink-0">
           <span className="text-[10px] text-white/20 font-medium uppercase tracking-wider">
             {todos.filter(t => t.completed).length} / {todos.length} Done
           </span>

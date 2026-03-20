@@ -25,7 +25,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
         dragMomentum={false}
         dragElastic={0.1}
         className="pointer-events-auto absolute p-2 rounded-3xl border border-white/20 bg-[#282828]/90 backdrop-blur-xl shadow-2xl w-100"
-        style={{ bottom: "5%", right: "2%" }}
+        style={{ top: "2%", left: "2%" }}
       >
         {/* Header Control */}
         <div className="flex justify-between items-center mb-2 px-3 pt-1">

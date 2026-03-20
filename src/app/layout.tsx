@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FocusFlow | Deep Work Dashboard",
+  title: "Yanidoro",
   description: "Stay focused with Pomodoro and Spotify vibes",
 };
 

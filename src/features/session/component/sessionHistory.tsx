@@ -29,7 +29,7 @@ const SessionHistory = ({ constraintsRef }: SessionHistoryProps) => {
   };
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-40">
+    <div className="fixed inset-0 pointer-events-none z-80">
       <motion.div
         drag
         dragConstraints={constraintsRef}
