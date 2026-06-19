@@ -17,7 +17,7 @@ import Pomodoro from "../../../features/pomodoro/components/Pomodoro";
 import Sidebar from "./sidebar";
 import MusicPlayer from "@/src/features/music/component/musicPlayer";
 import SessionHistory from "@/src/features/session/component/sessionHistory";
-import Quote from "@/src/features/quote/component/Quote";
+import Quote from "@/src/features/quote/components/Quote";
 import TodoList from "@/src/features/todo-list/components/TodoList";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
