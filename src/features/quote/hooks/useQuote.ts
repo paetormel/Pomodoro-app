@@ -16,10 +16,10 @@ const DEFAULT_QUOTE: Quote = {
 };
 
 export function useQuote(): UseQuoteResult {
+  const todayKey = getTodayQuoteDateKey();
   const { data, isLoading } = useQuery<Quote>({
-    queryKey: QUERY_KEYS.quote,
+    queryKey: QUERY_KEYS.quoteByDate(todayKey),
     queryFn: async (): Promise<Quote> => {
-      const todayKey = getTodayQuoteDateKey();
       const storedQuote = getStoredDailyQuote(todayKey);
 
       if (storedQuote) {
