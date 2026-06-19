@@ -1,21 +1,37 @@
 "use client";
 import React, { RefObject } from "react";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import { RiSpotifyFill } from "react-icons/ri";
 
 interface MusicPlayerProps {
   constraintsRef: RefObject<HTMLDivElement | null>;
-  // Ang ID na ito ay galing sa LifeAt LoFi playlist sa screenshot mo
   playlistId?: string; 
 }
 
 const MusicPlayer: React.FC<MusicPlayerProps> = ({ 
   constraintsRef, 
-  playlistId = "0vvXsWCC9xrXsKd4FyS8kM" // LifeAt LoFi Playlist ID
+  playlistId = "0vvXsWCC9xrXsKd4FyS8kM" 
 }) => {
+  const { data: settings } = useQuery({
+    queryKey: ["settings"],
+    queryFn: async () => {
+      const response = await fetch("/api/settings");
+      if (response.status === 401) {
+        return null;
+      }
+      if (!response.ok) {
+        throw new Error("Failed to load settings");
+      }
+      return (await response.json()) as {
+        spotifyPlaylistId: string | null;
+      } | null;
+    },
+  });
   
-  // Eto ang tamang URL para lumabas yung playlist view na gaya ng nasa image
-  const embedUrl = `https://open.spotify.com/embed/playlist/${playlistId}?utm_source=generator&theme=0`;
+  const embedUrl = `https://open.spotify.com/embed/playlist/${
+    settings?.spotifyPlaylistId || playlistId
+  }?utm_source=generator&theme=0`;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-30">

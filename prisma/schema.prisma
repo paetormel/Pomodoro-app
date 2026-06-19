@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+enum SessionType {
+  FOCUS
+  SHORT_BREAK
+  LONG_BREAK
+}
+
+model User {
+  id              String               @id @default(uuid()) @db.Uuid
+  fullName        String               @db.VarChar(160)
+  email           String               @unique @db.VarChar(320)
+  passwordHash    String               @db.VarChar(255)
+  emailVerified   DateTime?            @db.Timestamptz(6)
+  profileImageUrl String?              @db.VarChar(2048)
+  role            Role                 @default(USER)
+  createdAt       DateTime             @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime             @updatedAt @db.Timestamptz(6)
+
+  accounts            Account[]
+  sessions            Session[]
+  settings            Settings?
+  todos               Todo[]
+  pomodoroSessions    PomodoroSession[]
+  passwordResetTokens PasswordResetToken[]
+  auditLogs           AuditLog[]
+
+  @@index([createdAt])
+}
+
+model Account {
+  id                 String   @id @default(uuid()) @db.Uuid
+  userId             String   @db.Uuid
+  providerName       String   @db.VarChar(100)
+  providerAccountId  String   @db.VarChar(255)
+  accessToken        String?  @db.Text
+  refreshToken       String?  @db.Text
+  tokenExpiresAt     DateTime? @db.Timestamptz(6)
+  idToken            String?  @db.Text
+  createdAt          DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime @updatedAt @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerName, providerAccountId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Session {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @db.Uuid
+  sessionToken String   @unique @db.VarChar(255)
+  expiresAt    DateTime @db.Timestamptz(6)
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([createdAt])
+}
+
+model VerificationToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  email     String   @db.VarChar(320)
+  token     String   @unique @db.VarChar(255)
+  expiresAt DateTime @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([email])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
+  resetToken String   @unique @db.VarChar(255)
+  expiresAt  DateTime @db.Timestamptz(6)
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([createdAt])
+}
+
+model LoginAttempt {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @db.VarChar(320)
+  ipAddress    String   @db.VarChar(45)
+  userAgent    String   @db.Text
+  wasSuccessful Boolean
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([email])
+  @@index([ipAddress])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String?  @db.Uuid
+  actionType String   @db.VarChar(100)
+  entityType String?  @db.VarChar(100)
+  entityId   String?  @db.VarChar(191)
+  ipAddress  String   @db.VarChar(45)
+  userAgent  String   @db.Text
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([actionType])
+  @@index([createdAt])
+  @@index([entityType, entityId])
+}
+
+model Todo {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
+  title       String   @db.VarChar(255)
+  isCompleted Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([userId, sortOrder])
+}
+
+model PomodoroSession {
+  id             String       @id @default(uuid()) @db.Uuid
+  userId         String       @db.Uuid
+  sessionType    SessionType
+  durationMinutes Int
+  label          String?      @db.VarChar(120)
+  isCompleted    Boolean      @default(false)
+  startedAt      DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime     @updatedAt @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([startedAt])
+  @@index([userId, startedAt])
+}
+
+model Settings {
+  id                         String   @id @default(uuid()) @db.Uuid
+  userId                     String   @unique @db.Uuid
+  focusDurationMinutes       Int      @default(25)
+  shortBreakDurationMinutes  Int      @default(5)
+  longBreakDurationMinutes   Int      @default(15)
+  spotifyPlaylistId          String?  @db.VarChar(255)
+  theme                      Theme    @default(SYSTEM)
+  createdAt                  DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt                  DateTime @updatedAt @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+}
