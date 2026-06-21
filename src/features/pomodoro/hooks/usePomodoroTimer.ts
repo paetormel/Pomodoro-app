@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { DEFAULT_ALARM_AUDIO_SRC, DEFAULT_POMODORO_DURATIONS, SESSION_TYPE_MAP } from "../constants/pomodoro.constants";
 import { buildPomodoroTabs } from "../utils/pomodoro.utils";
 import { savePomodoroSession } from "../services/pomodoro.service";
@@ -8,6 +9,7 @@ import type { PomodoroSettings } from "../types/settings.types";
 export function usePomodoroTimer(
   initialDurations: PomodoroDurations = DEFAULT_POMODORO_DURATIONS
 ): UsePomodoroTimerResult {
+  const queryClient = useQueryClient();
   const [durations, setDurations] = useState<PomodoroDurations>(initialDurations);
   const [currentTab, setCurrentTab] = useState<TabId>("pomodoro");
   const [isActive, setIsActive] = useState(false);
@@ -71,12 +73,20 @@ export function usePomodoroTimer(
               });
             }
 
-            void savePomodoroSession({
-              sessionType: SESSION_TYPE_MAP[currentTab],
-              durationMinutes: currentConfig.minutes,
-              label: currentConfig.label,
-              isCompleted: true,
-            });
+            void (async () => {
+              try {
+                await savePomodoroSession({
+                  sessionType: SESSION_TYPE_MAP[currentTab],
+                  durationMinutes: currentConfig.minutes,
+                  label: currentConfig.label,
+                  isCompleted: true,
+                });
+
+                await queryClient.invalidateQueries({ queryKey: ["sessions"] });
+              } catch (error) {
+                console.error("Failed to save completed pomodoro session:", error);
+              }
+            })();
 
             return 0;
           }
@@ -91,7 +101,7 @@ export function usePomodoroTimer(
         clearInterval(interval);
       }
     };
-  }, [currentConfig.label, currentConfig.minutes, currentTab, isActive]);
+  }, [currentConfig.label, currentConfig.minutes, currentTab, isActive, queryClient]);
 
   const toggleTimer = useCallback(() => {
     setIsActive((prev) => !prev);
