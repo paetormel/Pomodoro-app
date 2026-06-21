@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Providers } from "../shared/components/layout/providers";
-import LayoutContent from "../shared/components/layout/layoutContent";
+import { Providers } from "@/src/shared/components/layout/providers";
 
 export const metadata: Metadata = {
   title: "Yanidoro",
@@ -16,10 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <Providers>
-          {/* Gagamit tayo ng hiwalay na component para sa logic ng AppShell */}
-          <LayoutContent>{children}</LayoutContent>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
