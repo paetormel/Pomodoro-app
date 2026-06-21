@@ -95,7 +95,7 @@ const SessionHistory = ({ constraintsRef }: SessionHistoryProps) => {
         dragConstraints={constraintsRef}
         dragMomentum={false}
         className="pointer-events-auto absolute p-5 rounded-4xl border border-white/20 bg-[#282828]/90  backdrop-blur-2xl shadow-2xl w-95"
-        style={{ top: "15%", left: "10%" }}
+        style={{ bottom: "2%", left: "10%" }}
       >
         <div className="flex justify-between items-center mb-5 px-2">
           <div className="flex items-center gap-2 text-[#1DB954]">
